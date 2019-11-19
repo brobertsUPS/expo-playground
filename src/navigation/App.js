@@ -1,7 +1,10 @@
 import React from "react";
 import { Button, View, Text } from "react-native";
 import { createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
+import {
+  createStackNavigator,
+  TransitionPresets
+} from "react-navigation-stack";
 
 const HomeScreen = ({ navigation }) => (
   <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -31,8 +34,13 @@ const AppNavigator = createStackNavigator(
     }
   },
   {
+    initialRouteName: "Home",
     mode: "modal",
-    initialRouteName: "Home"
+    defaultNavigationOptions: {
+      ...TransitionPresets.ModalPresentationIOS,
+      cardOverlayEnabled: true,
+      gestureEnabled: true
+    }
   }
 );
 
