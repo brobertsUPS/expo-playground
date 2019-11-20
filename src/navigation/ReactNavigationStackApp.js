@@ -26,6 +26,10 @@ const HomeScreen = ({ navigation }) => (
       title="Go to Details"
       onPress={() => navigation.navigate("Details")}
     />
+    <Button
+      title="Go to ReanimatedBottomSheetApp"
+      onPress={() => navigation.navigate("ReanimatedBottomSheetApp")}
+    />
   </View>
 );
 
@@ -83,7 +87,7 @@ const AppNavigator = createStackNavigator(
         ...TransitionPresets.ModalPresentationIOS, // ModalSlideFromBottomIOS or ModalPresentationIOS
         cardOverlayEnabled: true,
         gestureEnabled: true,
-        headerShown: false,
+        //headerShown: false,
         cardStyleInterpolator: editedForModalPresentationIOS
       };
     }

@@ -1,14 +1,16 @@
 import { createSwitchNavigator, createAppContainer } from "react-navigation";
 
-import App from "./App";
+import ReactNavigationStackApp from "./ReactNavigationStackApp";
+import ReanimatedBottomSheetApp from "./ReanimatedBottomSheetApp";
 
 export default createAppContainer(
   createSwitchNavigator(
     {
-      App
+      ReactNavigationStackApp,
+      ReanimatedBottomSheetApp
     },
     {
-      initialRouteName: "App"
+      initialRouteName: "ReactNavigationStackApp"
     }
   )
 );

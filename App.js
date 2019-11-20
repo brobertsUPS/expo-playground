@@ -2,8 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import Navigation from "./src/navigation";
-
-const App = () => <Navigation />;
+import ReanimatedBottomSheetApp from "./src/navigation/ReanimatedBottomSheetApp";
+const App = () => <ReanimatedBottomSheetApp />;
 
 export default App;
 
