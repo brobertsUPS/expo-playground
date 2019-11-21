@@ -44,7 +44,9 @@ const Home = createStackNavigator(
 );
 
 const Profile = createStackNavigator(
-  { ProfileScreen },
+  {
+    ProfileScreen
+  },
   {
     navigationOptions: ({ screenProps }) => ({
       tabBarIcon: ({ tintColor }) => (
@@ -157,11 +159,18 @@ class ProfileSwitcher extends React.Component {
   }
 }
 
-class NestedProfileSwitcher extends React.Component {
-  sheetRef: React.RefObject<BottomSheet> = React.createRef();
+const NestedProfSwitcher = ({ bottomSheetRef }) => {
+  const sheetRef = React.useRef();
+  const sheetOpenValue = new Animated.Value(1);
+  const overlayOpacity = Animated.interpolate(sheetOpenValue, {
+    inputRange: [0, 1],
+    outputRange: [0.5, 0],
+    extrapolate: Animated.Extrapolate.CLAMP
+  });
+  const pointerEvents = cond(greaterOrEq(0.9, sheetOpenValue), "auto", "none");
 
-  renderContent = () => {
-    return (
+  const renderContent = React.useCallback(
+    () => (
       <View
         style={{
           padding: 20,
@@ -171,75 +180,57 @@ class NestedProfileSwitcher extends React.Component {
       >
         <Text style={{ fontSize: 22 }}>Nested!</Text>
       </View>
-    );
-  };
+    ),
+    [Dimensions.get("window").height]
+  );
 
-  renderHeader = () => {
-    return (
+  const renderHeader = React.useCallback(
+    () => (
       <View style={styles.header}>
         <View style={styles.nestedPanelHandle} />
       </View>
-    );
-  };
+    ),
+    []
+  );
 
-  show = () => {
-    this.sheetRef.current && this.sheetRef.current.snapTo(0);
-  };
-
-  hide = () => {
-    this.sheetRef.current && this.sheetRef.current.snapTo(1);
-  };
-
-  sheetOpenValue = new Animated.Value(1);
-  overlayOpacity = Animated.interpolate(this.sheetOpenValue, {
-    inputRange: [0, 1],
-    outputRange: [0.5, 0],
-    extrapolate: Animated.Extrapolate.CLAMP
-  });
-  pointerEvents = cond(greaterOrEq(0.9, this.sheetOpenValue), "auto", "none");
-
-  handleTapStateChange = ({
+  const handleTapStateChange = ({
     nativeEvent
   }: {
     nativeEvent: { state: State }
   }) => {
     if (nativeEvent.state === State.ACTIVE) {
-      this.hide();
+      bottomSheetRef && bottomSheetRef.current.snapTo(1);
     }
   };
 
-  render() {
-    return (
-      <React.Fragment>
-        <TapGestureHandler onHandlerStateChange={this.handleTapStateChange}>
-          <Animated.View
-            pointerEvents={
-              Platform.OS === "android" ? "none" : this.pointerEvents
-            }
-            style={[
-              StyleSheet.absoluteFill,
-              { opacity: this.overlayOpacity, backgroundColor: "black" }
-            ]}
-          />
-        </TapGestureHandler>
-        <BottomSheet
-          ref={this.sheetRef}
-          overdragResistanceFactor={8}
-          enabledInnerScrolling={false}
-          snapPoints={[350, 0]}
-          renderContent={this.renderContent}
-          renderHeader={this.renderHeader}
-          initialSnap={1}
-          callbackNode={this.sheetOpenValue}
+  return (
+    <React.Fragment>
+      <TapGestureHandler onHandlerStateChange={handleTapStateChange}>
+        <Animated.View
+          pointerEvents={Platform.OS === "android" ? "none" : pointerEvents}
+          style={[
+            StyleSheet.absoluteFill,
+            { opacity: overlayOpacity, backgroundColor: "black" }
+          ]}
         />
-      </React.Fragment>
-    );
-  }
-}
+      </TapGestureHandler>
+      <BottomSheet
+        ref={bottomSheetRef}
+        overdragResistanceFactor={8}
+        enabledInnerScrolling={false}
+        snapPoints={[350, 0]}
+        renderContent={renderContent}
+        renderHeader={renderHeader}
+        initialSnap={1}
+        callbackNode={sheetOpenValue}
+      />
+    </React.Fragment>
+  );
+};
 
 export default class App extends React.Component {
   profileSwitcherRef: React.RefObject<ProfileSwitcher> = React.createRef();
-  nestedProfileSwitcherRef: React.RefObject<ProfileSwitcher> = React.createRef();
+  nestedProfSwitcherRef: React.RefObject<ProfileSwitcher> = React.createRef();
 
   render() {
     return (
@@ -254,11 +245,12 @@ export default class App extends React.Component {
         <ProfileSwitcher
           ref={this.profileSwitcherRef}
           showNestedProfileSwitcher={() => {
-            this.nestedProfileSwitcherRef.current &&
-              this.nestedProfileSwitcherRef.current.show();
+            this.nestedProfSwitcherRef.current &&
+              this.nestedProfSwitcherRef.current.snapTo(0);
           }}
         />
-        <NestedProfileSwitcher ref={this.nestedProfileSwitcherRef} />
+
+        <NestedProfSwitcher bottomSheetRef={this.nestedProfSwitcherRef} />
       </View>
     );
   }
