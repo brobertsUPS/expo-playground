@@ -117,7 +117,7 @@ class ProfileSwitcher extends React.Component {
     outputRange: [0.5, 0],
     extrapolate: Animated.Extrapolate.CLAMP
   });
-  pointerEvents = cond(greaterOrEq(0.9, this.sheetOpenValue), "auto", "none");
+  pointerEvents = cond(greaterOrEq(0.9, this.sheetOpenValue), 0, 1);
 
   handleTapStateChange = ({
     nativeEvent

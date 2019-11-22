@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import Navigation from "./src/navigation";
 import ReanimatedBottomSheetApp from "./src/navigation/ReanimatedBottomSheetApp";
-const App = () => <ReanimatedBottomSheetApp />;
+const App = () => <Navigation />;
 
 export default App;
 
